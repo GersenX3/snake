@@ -18,17 +18,20 @@ dibujar(0,515,515,515,10);
 dibujar(515,0,515,520,10);
 
 //agregando sprites
-var sprites = {up:"/sources/vHeadUp.png",down:"/sources/vHeadDown.png",left:"/sources/vHeadLeft.png",right:"/sources/vHeadRight.png",
-tailUp:"/sources/vTaleUp.png",tailDown:"/sources/vTaleDown.png",tailLeft:"/sources/vTaleLeft.png",tailRight:"/sources/vTaleRight.png",}
-var snake = {src : sprites, loaded: false,};
-
+var sprites = {up:"sources/vHeadUp.png",down:"sources/vHeadDown.png",left:"sources/vHeadLeft.png",right:"sources/vHeadRight.png",
+tailUp:"sources/vTaleUp.png",tailDown:"sources/vTaleDown.png",tailLeft:"sources/vTaleLeft.png",tailRight:"sources/vTaleRight.png",}
+var snake = {src : sprites.up, loaded: false,};
+console.log(snake);
 snake.imagen = new Image();
 snake.imagen.src = snake.src;
-snake.imagen.addEventListener("load",loadedSnake)
+snake.imagen.addEventListener("load",loadedSnake);
+console.log(snake);
+
 // Funcionas lanzadas al cargar imagenes
 function loadedSnake()
 {
     snake.loaded = true;
+    console.log(snake)
     draw()
 }
 
@@ -36,7 +39,7 @@ function draw()
 {
     if(snake.loaded)
     {
-        lienzo.drawImage(snake.src.up,235,235)
+        lienzo.drawImage(snake.imagen,235,235)
     }
 }
 draw()

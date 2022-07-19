@@ -72,20 +72,64 @@ draw()
 
 //funcion para mover por teclas
 var teclas = {up:38,down:40,left:37, right:39}
-document.addEventListener("keydown",mover);
-
-function mover(teclaAbajo)
+var ultimaTecla;
+document.addEventListener("keydown",teclaPresionada);
+function teclaPresionada(teclaAbajo)
 {
     if (teclaAbajo.keyCode == teclas.up)
+    {
+        if(ultimaTecla == teclas.down)
+        {
+            ultimaTecla;
+        }
+        else{
+            ultimaTecla = teclas.up
+        }
+    }
+    if (teclaAbajo.keyCode == teclas.down)
+    {
+        if(ultimaTecla == teclas.up)
+        {
+            ultimaTecla;
+        }
+        else{
+            ultimaTecla = teclas.down
+        }
+    }
+    if (teclaAbajo.keyCode == teclas.left)
+    {
+        if(ultimaTecla == teclas.right)
+        {
+            ultimaTecla;
+        }
+        else{
+            ultimaTecla = teclas.left
+        }
+    }
+    if (teclaAbajo.keyCode == teclas.right)
+    {
+        if(ultimaTecla == teclas.left)
+        {
+            ultimaTecla;
+        }
+        else{
+            ultimaTecla = teclas.right
+        }
+    }
+    mover()
+}
+
+function mover()
+{
+    if (ultimaTecla == teclas.up)
     {
         snake.tail = sprites.tailDown
         snake.head = sprites.up;
         snake.y -= 50;
         snake.yT = snake.y+50;
         snake.xT = snake.x;
-
     }
-    if (teclaAbajo.keyCode == teclas.down)
+    if (ultimaTecla == teclas.down)
     {
         snake.tail = sprites.tailUp;
         snake.head = sprites.down;
@@ -93,7 +137,7 @@ function mover(teclaAbajo)
         snake.yT = snake.y-50;
         snake.xT = snake.x;
     }
-    if(teclaAbajo.keyCode == teclas.left)
+    if(ultimaTecla == teclas.left)
     {
         snake.tail = sprites.tailRight
         snake.head = sprites.left;
@@ -101,7 +145,7 @@ function mover(teclaAbajo)
         snake.xT = snake.x+50;
         snake.yT = snake.y;
     }
-    if(teclaAbajo.keyCode == teclas.right)
+    if(ultimaTecla == teclas.right)
     {
         snake.tail = sprites.tailLeft
         snake.head = sprites.right;
@@ -111,13 +155,19 @@ function mover(teclaAbajo)
     }
     snake.imagenHead.src = snake.head;
     snake.imagenTail.src = snake.tail;
-    draw();
     if(snake.x == manzana.x && snake.y == manzana.y)
     {
         Score();
         manzana.x =aleatorio(10)*50+10;
         manzana.y =aleatorio(10)*50+10;
     }
+    if(snake.x <10  || snake.y < 10 || snake.x>460 || snake.y>460)
+    {
+        parrafo.innerHTML= "You lose";
+        tiempo = 5000;
+        setTimeout(function(){location.reload()},1000);
+    }
+    draw();
 }
 
 //Score funcion
@@ -135,3 +185,13 @@ function aleatorio(max)
     return x
 }
 console.log(aleatorio(10,5));
+
+//loop
+var tiempo = 500;
+setTimeout(loop,tiempo);
+var terminarLoop = false;
+function loop()
+{
+    mover();
+    setTimeout(loop,tiempo);
+}

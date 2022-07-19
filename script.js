@@ -11,35 +11,127 @@ lienzo.lineWidth = ancho;
 lienzo.stroke();
 lienzo.closePath();
 }
-
-dibujar(5,5,5,515,10);
-dibujar(0,5,515,5,10);
-dibujar(0,515,515,515,10);
-dibujar(515,0,515,520,10);
+function dibujarP()//dibuja el perimetro
+{
+    dibujar(5,5,5,515,10);
+    dibujar(0,5,515,5,10);
+    dibujar(0,515,515,515,10);
+    dibujar(515,0,515,520,10);
+    
+}
 
 //agregando sprites
 var sprites = {up:"sources/vHeadUp.png",down:"sources/vHeadDown.png",left:"sources/vHeadLeft.png",right:"sources/vHeadRight.png",
 tailUp:"sources/vTaleUp.png",tailDown:"sources/vTaleDown.png",tailLeft:"sources/vTaleLeft.png",tailRight:"sources/vTaleRight.png",}
-var snake = {src : sprites.up, loaded: false,};
+var snake = {loaded: false, x:110, y:10, xT:60, yT:10, head:sprites.right, body:"", tail: sprites.tailLeft};
 console.log(snake);
-snake.imagen = new Image();
-snake.imagen.src = snake.src;
-snake.imagen.addEventListener("load",loadedSnake);
+snake.imagenHead = new Image();
+snake.imagenHead.src = snake.head;
+snake.imagenHead.addEventListener("load",loadedSnake);
+snake.imagenTail = new Image();
+snake.imagenTail.src = snake.tail;
+snake.imagenTail.addEventListener("load",loadedSnakeTail);
 console.log(snake);
 
-// Funcionas lanzadas al cargar imagenes
+var manzana = {loaded: false, x:aleatorio(10)*50+10, y:aleatorio(10)*50+10, src:"sources/apple.png"}
+manzana.imagen = new Image();
+manzana.imagen.src = manzana.src;
+snake.imagenTail.addEventListener("load",loadedManzana);
+// Funciones lanzadas al cargar imagenes
 function loadedSnake()
 {
     snake.loaded = true;
     console.log(snake)
     draw()
 }
+function loadedSnakeTail()
+{
+    snake.loaded = true;
+    console.log(snake)
+    draw()
+}
+function loadedManzana()
+{
+    manzana.loaded = true;
+    draw()
+}
+
 
 function draw()
 {
+    lienzo.clearRect(0, 0, can.width, can.height);
+    dibujarP();
     if(snake.loaded)
     {
-        lienzo.drawImage(snake.imagen,235,235)
+        lienzo.drawImage(snake.imagenHead,snake.x,snake.y);
+        lienzo.drawImage(snake.imagenTail,snake.xT,snake.yT);
+        lienzo.drawImage(manzana.imagen,manzana.x,manzana.y);
     }
 }
 draw()
+
+//funcion para mover por teclas
+var teclas = {up:38,down:40,left:37, right:39}
+document.addEventListener("keydown",mover);
+
+function mover(teclaAbajo)
+{
+    if (teclaAbajo.keyCode == teclas.up)
+    {
+        snake.tail = sprites.tailDown
+        snake.head = sprites.up;
+        snake.y -= 50;
+        snake.yT = snake.y+50;
+        snake.xT = snake.x;
+
+    }
+    if (teclaAbajo.keyCode == teclas.down)
+    {
+        snake.tail = sprites.tailUp;
+        snake.head = sprites.down;
+        snake.y += 50;
+        snake.yT = snake.y-50;
+        snake.xT = snake.x;
+    }
+    if(teclaAbajo.keyCode == teclas.left)
+    {
+        snake.tail = sprites.tailRight
+        snake.head = sprites.left;
+        snake.x -= 50;
+        snake.xT = snake.x+50;
+        snake.yT = snake.y;
+    }
+    if(teclaAbajo.keyCode == teclas.right)
+    {
+        snake.tail = sprites.tailLeft
+        snake.head = sprites.right;
+        snake.x += 50;
+        snake.xT = snake.x-50;
+        snake.yT = snake.y;
+    }
+    snake.imagenHead.src = snake.head;
+    snake.imagenTail.src = snake.tail;
+    draw();
+    if(snake.x == manzana.x && snake.y == manzana.y)
+    {
+        Score();
+        manzana.x =aleatorio(10)*50+10;
+        manzana.y =aleatorio(10)*50+10;
+    }
+}
+
+//Score funcion
+var score = 0;
+var parrafo = document.getElementById("puntaje");
+function Score()
+{
+    score+=100;
+    parrafo.innerHTML = "Score : "+score
+}
+
+function aleatorio(max)
+{
+    var x = parseInt(Math.random()*(max));
+    return x
+}
+console.log(aleatorio(10,5));

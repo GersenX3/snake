@@ -1,3 +1,14 @@
+class cuerpo 
+{
+ constructor (x,y)
+ {
+    this.imagen = new Image();
+    this.imagen.src = "sources/body.png";
+    this.x = x;
+    this.y = y;
+ }
+}
+
 var can = document.getElementById("canvasH");
 var lienzo = can.getContext("2d");
 //Dibujar
@@ -21,17 +32,15 @@ function dibujarP()//dibuja el perimetro
 }
 
 //agregando sprites
-var sprites = {up:"sources/vHeadUp.png",down:"sources/vHeadDown.png",left:"sources/vHeadLeft.png",right:"sources/vHeadRight.png",
+var sprites = {up:"sources/vHeadUp.png",down:"sources/vHeadDown.png",left:"sources/body.png",right:"sources/vHeadRight.png",
 tailUp:"sources/vTaleUp.png",tailDown:"sources/vTaleDown.png",tailLeft:"sources/vTaleLeft.png",tailRight:"sources/vTaleRight.png",}
-var snake = {loaded: false, x:110, y:10, xT:60, yT:10, head:sprites.right, body:"", tail: sprites.tailLeft};
-console.log(snake);
+var snake = {loaded: false, x:110, y:10, xT:60, yT:10, head:sprites.right, body:[], tail: sprites.tailLeft};
 snake.imagenHead = new Image();
-snake.imagenHead.src = snake.head;
+snake.imagenHead.src = "sources/body.png";
 snake.imagenHead.addEventListener("load",loadedSnake);
 snake.imagenTail = new Image();
-snake.imagenTail.src = snake.tail;
+snake.imagenTail.src = "sources/body.png";
 snake.imagenTail.addEventListener("load",loadedSnakeTail);
-console.log(snake);
 
 var manzana = {loaded: false, x:aleatorio(10)*50+10, y:aleatorio(10)*50+10, src:"sources/apple.png"}
 manzana.imagen = new Image();
@@ -41,13 +50,11 @@ snake.imagenTail.addEventListener("load",loadedManzana);
 function loadedSnake()
 {
     snake.loaded = true;
-    console.log(snake)
     draw()
 }
 function loadedSnakeTail()
 {
     snake.loaded = true;
-    console.log(snake)
     draw()
 }
 function loadedManzana()
@@ -66,6 +73,10 @@ function draw()
         lienzo.drawImage(snake.imagenHead,snake.x,snake.y);
         lienzo.drawImage(snake.imagenTail,snake.xT,snake.yT);
         lienzo.drawImage(manzana.imagen,manzana.x,manzana.y);
+        for(var cuer of snake.body)
+        {
+            lienzo.drawImage(cuer.imagen,cuer.x,cuer.y)
+        }
     }
 }
 draw()
@@ -121,6 +132,10 @@ function teclaPresionada(teclaAbajo)
 
 function mover()
 {
+    let x = snake.x;
+    let y = snake.y;
+    let xt;
+    let yt;
     if (ultimaTecla == teclas.up)
     {
         snake.tail = sprites.tailDown
@@ -153,23 +168,51 @@ function mover()
         snake.xT = snake.x-50;
         snake.yT = snake.y;
     }
-    snake.imagenHead.src = snake.head;
-    snake.imagenTail.src = snake.tail;
+    for(var cuer of snake.body)
+    {
+        xt = cuer.x;
+        yt = cuer.y;
+        cuer.x = x;
+        cuer.y = y;
+        x = xt;
+        y = yt;
+    }
+    snake.imagenHead.src = "sources/body.png";
+    snake.imagenTail.src = "sources/body.png";
     if(snake.x == manzana.x && snake.y == manzana.y)
     {
         Score();
+        crecer();
         manzana.x =aleatorio(10)*50+10;
         manzana.y =aleatorio(10)*50+10;
     }
     if(snake.x <10  || snake.y < 10 || snake.x>460 || snake.y>460)
     {
-        parrafo.innerHTML= "You lose";
-        tiempo = 5000;
-        setTimeout(function(){location.reload()},1000);
+        gameOver()
+    }
+    for(var cuer of snake.body)
+    {
+        if(snake.x == cuer.x && snake.y == cuer.y)
+        {
+            gameOver()
+        }
     }
     draw();
+    if(snake.body.length ==20)
+    {
+        alert("Ganaste");
+    }
+    console.log(snake);
 }
-
+//funcion game over
+function gameOver()
+{
+    snake.imagenHead.src = "nada";
+    snake.imagenTail.src = "nada";    
+    parrafo.innerHTML= "You lose";
+    tiempo = 5000;
+    setTimeout(function(){location.reload()},1000);
+}
 //Score funcion
 var score = 0;
 var parrafo = document.getElementById("puntaje");
@@ -184,14 +227,17 @@ function aleatorio(max)
     var x = parseInt(Math.random()*(max));
     return x
 }
-console.log(aleatorio(10,5));
 
 //loop
-var tiempo = 500;
+var tiempo = 100;
 setTimeout(loop,tiempo);
-var terminarLoop = false;
 function loop()
 {
     mover();
     setTimeout(loop,tiempo);
+}
+
+function crecer()
+{
+    snake.body.push(new cuerpo(snake.xT,snake.yT));
 }

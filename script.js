@@ -168,7 +168,7 @@ function Score()
 {score+=100;parrafo.innerHTML = "Score : "+score}
 function aleatorio(max)
 {var x = parseInt(Math.random()*(max));return x}
-var tiempo = 200; // Loop
+var tiempo = 100; // Loop
 setTimeout(loop,tiempo);
 function loop()
 {mover();setTimeout(loop,tiempo)}
